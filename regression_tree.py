@@ -39,6 +39,14 @@ def uniquecounts(rows):
         results[r] += 1
     return results
 
+def mean(rows):
+    total_sum = 0
+    total_num = 0
+    for row in rows:
+        r = row[len(row) - 1]
+        total_sum += float(r)
+        total_num += 1
+    return round(total_sum/total_num,2)
 
 # Probability that a randomly placed item will
 # be in the wrong category
@@ -77,20 +85,8 @@ def variance(rows):
     return variance
 
 
-
-
-
 def prediction(leaf_labels):
-    total = 0
-    result = {}
-    for label, count in leaf_labels.items():
-        total += count
-        result[label] = count
-
-    for label, val in result.items():
-        result[label] = str(int(result[label]/total * 100))+"%"
-
-    return result
+    return leaf_labels
 
 
 def classify(observation, tree):
@@ -100,7 +96,7 @@ def classify(observation, tree):
         v = observation[tree.col]
         branch = None
         if isinstance(v, int) or isinstance(v, float):
-            if v >= tree.value:
+            if v >= int(tree.value):
                 branch = tree.tb
             else:
                 branch = tree.fb
@@ -142,7 +138,7 @@ def mdclassify(observation, tree):
             return mdclassify(observation, branch)
 
 
-def buildtree(rows, scoref=entropy,
+def buildtree(rows, scoref=variance,
               min_gain=0, min_samples=0):
     if len(rows) == 0:
         return decisionnode()
@@ -180,7 +176,8 @@ def buildtree(rows, scoref=entropy,
         return decisionnode(col=best_criteria[0], value=best_criteria[1],
                             tb=trueBranch, fb=falseBranch)
     else:
-        return decisionnode(results=uniquecounts(rows))
+        
+        return decisionnode(results=mean(rows))
 
 
 def max_depth(tree):
@@ -216,3 +213,4 @@ def printtree(tree, current_branch, attributes=None,  indent='', leaff=predictio
         indent = indent + '  '
         printtree(tree.tb, 'T->', attributes, indent)
         printtree(tree.fb, 'F->', attributes, indent)
+

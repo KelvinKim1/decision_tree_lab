@@ -1,4 +1,4 @@
-import dtree_build
+import regression_tree
 import sys
 import csv
 
@@ -19,16 +19,23 @@ def main(col_names=None):
             data.append(list(row))
 
     print("Total number of records = ",len(data))
-    tree = dtree_build.buildtree(data, min_gain =0.00, min_samples = 5)
+    tree = regression_tree.buildtree(data, min_gain =0.001, min_samples = 5)
 
-    dtree_build.printtree(tree, '', col_names)
+    regression_tree.printtree(tree, '', col_names)
 
-    max_tree_depth = dtree_build.max_depth(tree)
+    max_tree_depth = regression_tree.max_depth(tree)
     print("max number of questions=" + str(max_tree_depth))
 
+    print("ODE: ")
+    print(regression_tree.classify(['tenured', 'not minority', 'male', 'english', 'young', 'small', 'upper', 'not handsome/beautiful)', 'good'], tree))
+    print("Linear Algebra: ")
+    print(regression_tree.classify(['tenured', 'not minority', 'male', 'english', 'young', 'small', 'lower', 'not handsome/beautiful)', 'bad'], tree))
+    print("Intro to Stats: ")
+    print(regression_tree.classify(['tenured', 'not minority', 'female', 'english', 'young', 'small', 'lower', 'not handsome/beautiful)', 'good'], tree))
+
     if len(sys.argv) > 2: # draw option specified
-        import dtree_draw
-        dtree_draw.drawtree(tree, jpeg=csv_file_name+'.jpg')
+        import dtree_draw_regression_tree
+        dtree_draw_regression_tree.drawtree(tree, jpeg=csv_file_name+'.jpg')
 
     if len(sys.argv) > 3:  # create json file for d3.js visualization
         import json
